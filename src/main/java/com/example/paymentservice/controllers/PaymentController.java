@@ -2,10 +2,8 @@ package com.example.paymentservice.controllers;
 
 import com.example.paymentservice.dtos.InitiatePaymentDto;
 import com.example.paymentservice.services.PaymentService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.paymentservice.services.ProductService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments")
@@ -13,8 +11,11 @@ public class PaymentController {
 
     private PaymentService paymentService;
 
-    public PaymentController(PaymentService paymentService) {
+    private ProductService productService;
+
+    public PaymentController(PaymentService paymentService, ProductService productService) {
         this.paymentService = paymentService;
+        this.productService = productService;
     }
 
 
@@ -25,6 +26,17 @@ public class PaymentController {
                 initiatePaymentDto.getPhoneNumber(),
                 initiatePaymentDto.getAmount(),
                 initiatePaymentDto.getOrderId());
+    }
+
+    @PostMapping("/webhook")
+    public String listenToWebhook(@RequestBody String webhookEvent) {
+        System.out.println(webhookEvent);
+        return "OK";
+    }
+
+    @GetMapping("/product/{id}")
+    public String getProductDetails(@PathVariable String id){
+        return productService.getProductDetails(id);
     }
 
 }
